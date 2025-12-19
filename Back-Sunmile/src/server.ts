@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }))
 
 
 app.use(cors({
-  origin: "https://sunmile-back.vercel.app/",  
+  origin: "https://sunmile.vercel.app/",  
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"]
@@ -41,4 +41,5 @@ AppDataSource.initialize()
   .catch((err) => {
     console.error("Error initializing database:", err)
   })
+
 
