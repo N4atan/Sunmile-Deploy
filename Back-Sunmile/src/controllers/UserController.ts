@@ -57,7 +57,7 @@ export class UserController {
 			return res.status(201).json(user)
 		} catch (error) {
 			console.error(error)
-			return res.status(500).json({ message: 'Erro interno do servidor' })
+			return res.status(500).json({ message: 'Erro interno do servidor', error })
 		}
 	}
 
@@ -143,3 +143,4 @@ export class UserController {
 		}
 	}
 }
+
