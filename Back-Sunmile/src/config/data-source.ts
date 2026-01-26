@@ -1,6 +1,7 @@
 import 'reflect-metadata'
 import { DataSource } from 'typeorm'
 import * as dotenv from 'dotenv'
+import path from 'path'  
 
 dotenv.config()
 
@@ -17,7 +18,7 @@ export const AppDataSource = new DataSource({
   logging: true,
   entities: [
     process.env.NODE_ENV === 'production'
-      ? path.join(__dirname, '../models/*.js')
-      : path.join(__dirname, '../models/*.ts')
-  ]
+      ? path.join(__dirname, '../models/*.js') 
+      : path.join(__dirname, '../models/*.ts') 
+  ],
 })
