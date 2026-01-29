@@ -256,18 +256,31 @@ async function loadProfessionals() {
 		container.innerHTML = professionals.map(pro => `
 			<div class="professional-card">
 				<div class="professional-header">
-					<div class="professional-avatar">
-						${pro.user.name.charAt(0)}
-					</div>
-					<div>
-						<strong>${pro.user.name}</strong>
-						<span>@${pro.user.username}</span>
-					</div>
+				<div class="professional-avatar">
+					${pro.user.name.charAt(0)}
 				</div>
+				<div>
+					<strong>${pro.user.name}</strong>
+					<span>@${pro.user.username}</span>
+				</div>
+				</div>
+
 				<div class="professional-info">
-					<p><strong>Registro:</strong> ${pro.pro_registration}</p>
-					<p><strong>Telefone:</strong> ${pro.phone_number}</p>
-					${pro.bio ? `<p><strong>Bio:</strong> ${pro.bio}</p>` : ''}
+				<p><strong>Registro:</strong> ${pro.pro_registration}</p>
+				<p><strong>Telefone:</strong> ${pro.phone_number}</p>
+
+				${
+					pro.bio
+					? `
+						<p class="professional-bio">${pro.bio}</p>
+						<button
+						class="show-more-btn"
+						onclick='openProfessionalModal(${JSON.stringify(pro)})'>
+						Exibir mais
+						</button>
+					`
+					: ''
+				}
 				</div>
 			</div>
 		`).join('')
@@ -276,6 +289,21 @@ async function loadProfessionals() {
 	}
 }
 
+function openProfessionalModal(pro) {
+	const modal = document.getElementById('professional-modal')
+  
+	document.getElementById('modal-name').textContent = pro.user.name
+	document.getElementById('modal-username').textContent = '@' + pro.user.username
+	document.getElementById('modal-bio').textContent = pro.bio || ''
+  
+	modal.classList.remove('hidden')
+}
+  
+function closeProfessionalModal() {
+	document.getElementById('professional-modal').classList.add('hidden')
+}
+  
+  
 /* =============================
    PROFILE (UPDATE / DELETE)
 ============================= */
