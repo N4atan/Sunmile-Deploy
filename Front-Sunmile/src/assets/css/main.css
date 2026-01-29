@@ -668,6 +668,7 @@ body {
   font-size: 0.95rem;
   line-height: 1.6;
   white-space: pre-line; 
+  margin-bottom: 3px;
 }
 
 
@@ -772,7 +773,6 @@ body {
 .modal-actions .btn-secondary {
   background: var(--purple-color);
   color: #fff;
-  margin-top: 3px;
 }
 
 .modal-actions .btn-secondary:hover {
