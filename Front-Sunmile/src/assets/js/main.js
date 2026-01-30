@@ -241,6 +241,8 @@ function setupPostModal() {
    PROFESSIONALS
 ============================= */
 
+let professionalsCache = []
+
 async function loadProfessionals() {
 	const container = document.getElementById('professionals-list')
 	if (!container) return
@@ -252,35 +254,39 @@ async function loadProfessionals() {
 		if (!res.ok) throw new Error()
 
 		const professionals = await res.json()
+		professionalsCache = professionals
 
-		container.innerHTML = professionals.map(pro => `
+		container.innerHTML = professionals.map((pro, index) => `
 			<div class="professional-card">
 				<div class="professional-header">
-				<div class="professional-avatar">
-					${pro.user.name.charAt(0)}
-				</div>
-				<div>
-					<strong>${pro.user.name}</strong>
-					<span>@${pro.user.username}</span>
-				</div>
+					<div class="professional-avatar">
+						${
+							pro.user.profile_pic_url
+								? `<img src="${pro.user.profile_pic_url}" alt="Avatar de ${pro.user.name}">`
+								: pro.user.name.charAt(0)
+						}
+					</div> 
+					<div class="professional-name">
+						<strong>${pro.user.name}</strong>
+						<span>@${pro.user.username}</span>
+					</div>
 				</div>
 
 				<div class="professional-info">
-				<p><strong>Registro:</strong> ${pro.pro_registration}</p>
-				<p><strong>Telefone:</strong> ${pro.phone_number}</p>
+					<p><strong>Registro:</strong> ${pro.pro_registration}</p>
 
-				${
-					pro.bio
-					? `
-						<p class="professional-bio">${pro.bio}</p>
-						<button
-						class="show-more-btn"
-						onclick='openProfessionalModal(${JSON.stringify(pro)})'>
-						Exibir mais
-						</button>
-					`
-					: ''
-				}
+					${
+						pro.bio
+							? `
+								<p class="professional-bio">${pro.bio}</p>
+								<button
+									class="show-more-btn"
+									onclick="openProfessionalModal(${index})">
+									Exibir mais
+								</button>
+							`
+							: ''
+					}
 				</div>
 			</div>
 		`).join('')
@@ -289,20 +295,44 @@ async function loadProfessionals() {
 	}
 }
 
-function openProfessionalModal(pro) {
+function openProfessionalModal(index) {
+	const pro = professionalsCache[index]
 	const modal = document.getElementById('professional-modal')
-  
+
+	// Avatar
+	const avatar = document.getElementById('modal-avatar')
+	avatar.innerHTML = pro.user.profile_pic_url
+		? `<img src="${pro.user.profile_pic_url}" alt="Avatar de ${pro.user.name}">`
+		: pro.user.name.charAt(0)
+
+	// Infos públicas
 	document.getElementById('modal-name').textContent = pro.user.name
 	document.getElementById('modal-username').textContent = '@' + pro.user.username
+	document.getElementById('modal-registration').textContent = pro.pro_registration
+	document.getElementById('modal-phone').textContent = pro.phone_number
 	document.getElementById('modal-bio').textContent = pro.bio || ''
-  
+
 	modal.classList.remove('hidden')
 }
-  
+
 function closeProfessionalModal() {
 	document.getElementById('professional-modal').classList.add('hidden')
 }
-  
+
+async function updateProfileAvatar(imageUrl) {
+	const res = await fetch(`${API_BASE}/users/me/avatar`, {
+		method: 'PATCH',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`
+		},
+		body: JSON.stringify({ profile_pic_url: imageUrl })
+	})
+
+	if (!res.ok) {
+		throw new Error('Erro ao salvar avatar')
+	}
+}
   
 /* =============================
    PROFILE (UPDATE / DELETE)
@@ -312,6 +342,14 @@ function loadProfile(user) {
 	const form = document.getElementById('perfil-form')
 	const status = document.getElementById('status')
 	const deleteBtn = document.getElementById('delete-account-btn')
+	const avatarImg = document.getElementById('profile-avatar')
+	const avatarInput = document.getElementById('avatar-input')
+
+	if (avatarImg) {
+	avatarImg.src = user.profile_pic_url
+		? user.profile_pic_url
+		: '../assets/img/default avatar.jpg'
+	}
 
 	if (!form) return
 
@@ -329,6 +367,49 @@ function loadProfile(user) {
 		form.bio.value = user.professional.bio || ''
 		form.pro_registration.value = user.professional.pro_registration || ''
 	}
+
+	avatarImg?.addEventListener('click', () => {
+		avatarInput.click()
+	})
+
+	avatarInput?.addEventListener('change', async () => {
+		const file = avatarInput.files[0]
+		if (!file) return
+	  
+		if (!file.type.startsWith('image/')) {
+		  alert('Selecione uma imagem válida')
+		  return
+		}
+	  
+		const formData = new FormData()
+		formData.append('file', file)
+		formData.append('upload_preset', 'sunmile_unsigned')
+	  
+		try {
+		  avatarImg.style.opacity = '0.5'
+	  
+		  const cloudRes = await fetch(
+			'https://api.cloudinary.com/v1_1/dgvwjb1cj/image/upload',
+			{
+			  method: 'POST',
+			  body: formData
+			}
+		  )
+	  
+		  const cloudData = await cloudRes.json()
+		  if (!cloudData.secure_url) throw new Error()
+	  
+		  avatarImg.src = cloudData.secure_url
+	  
+		  await updateProfileAvatar(cloudData.secure_url)
+	  
+		} catch {
+		  alert('Erro ao enviar imagem')
+		} finally {
+		  avatarImg.style.opacity = '1'
+		}
+	})
+	  
 
 	form.addEventListener('submit', async (e) => {
 		e.preventDefault()

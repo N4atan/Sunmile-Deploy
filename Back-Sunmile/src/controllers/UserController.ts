@@ -114,6 +114,41 @@ export class UserController {
 		}
 	}
 
+	async updateAvatar(req: Request, res: Response): Promise<Response> {
+		try {
+			const userId = req.user.id
+			const { profile_pic_url } = req.body
+		
+			if (!profile_pic_url) {
+				return res.status(400).json({
+				message: 'URL da imagem é obrigatória'
+				})
+		    }
+	  
+		  const user = await userRepository.findById(userId)
+	  
+		  if (!user) {
+				return res.status(404).json({
+				message: 'Usuário não encontrado'
+			})
+		  }
+	  
+			user.profile_pic_url = profile_pic_url
+		
+			const updatedUser = await userRepository.saveUser(user)
+		
+			return res.json({
+				profile_pic_url: updatedUser.profile_pic_url
+			})
+			
+		} catch (error) {
+				console.error(error)
+				return res.status(500).json({
+				message: 'Erro interno do servidor'
+			})
+		}
+	}
+	  
 	async deleteUser(req: Request, res: Response): Promise<Response> {
 		try {
 			const id = Number(req.params.id) || req.user.id

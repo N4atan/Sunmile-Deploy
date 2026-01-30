@@ -15,4 +15,6 @@ router.patch('/users/change-password', auth.authenticateToken, controller.change
 
 router.post('/users', controller.createUser)
 
+router.patch('/users/me/avatar', auth.authenticateToken, controller.updateAvatar)
+
 export default router;
