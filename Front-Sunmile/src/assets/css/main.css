@@ -690,6 +690,7 @@ body {
   color: #777;
   font-size: 0.9rem;
   margin-bottom: 16px;
+  text-align: center;
 }
 
 .professional-modal p {
@@ -705,6 +706,7 @@ body {
   font-size: 0.95rem;
   line-height: 1.5;
   margin-bottom: 16px;
+  white-space: pre-line;
 }
 
 
