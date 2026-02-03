@@ -14,7 +14,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use(cors({
-  origin: "https://sunmile.vercel.app",
+  origin: "https://sunmile-deploy.vercel.app/",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"]
@@ -27,4 +27,5 @@ app.use("/sunmile", proPostRoutes)
 app.get('/', (req, res) => res.send('Back-end running!'))
 
 export default app
+
 
