@@ -143,6 +143,8 @@ links.forEach(link => {
 	})
 })
 
+window.onload = loadPage('posts');
+
 /* =============================
    POSTS
 ============================= */
@@ -601,3 +603,4 @@ document.querySelector('.logout-btn')?.addEventListener('click', () => {
 	localStorage.removeItem('token')
 	window.location.href = '../index.html'
 })
+
