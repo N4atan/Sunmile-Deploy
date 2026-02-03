@@ -140,46 +140,6 @@ body {
 
 .settings:hover { color: var(--menu-hover); }
 
-/* -------- BARRA DE PESQUISA -------- */
-.search-bar {
-  position: fixed;
-  top: 0.9rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 45%;
-  max-width: 31.25rem;
-  z-index: 100;
-}
-
-.search-wrapper {
-  position: relative;
-  flex: 1;
-  border-radius: 2rem;
-  padding: 0.1rem;
-  background: linear-gradient(to right, #58cc02, #ffcc00);
-}
-
-.search-wrapper input {
-  width: 100%;
-  padding: 0.8rem 0.9rem 0.8rem 2rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 2rem;
-  outline: none;
-  background: var(--bg-color);
-  color: var(--text-color);
-}
-
-.search-icon {
-  position: absolute;
-  top: 50%;
-  left: 0.9rem;
-  transform: translateY(-50%);
-  font-size: 1.2rem;
-  color: #888;
-  pointer-events: none;
-}
-
 /* -------- MENU DE CONFIGURAÇÕES -------- */
 .settings-menu {
   position: fixed;
@@ -996,13 +956,6 @@ body {
 
   .settings-menu {
     width: 15.625rem; /* 250px */
-  }
-
-  .search-bar {
-    width: 90%;
-    top: 0.625rem; /* 10px */
-    left: 50%;
-    transform: translateX(-50%);
   }
 
   .content { padding: 5rem 1.25rem 7.5rem; }
