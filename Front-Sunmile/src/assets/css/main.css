@@ -770,6 +770,8 @@ body {
 .post-content p {
   font-size: 0.95rem;
   line-height: 1.4;
+  word-break: break-word;
+  text-align: left;
 }
 
 .post-image-preview {
@@ -811,11 +813,12 @@ body {
 }
 
 .post-images img {
+  display: flex;
   width: 100%;
   height: 170px;
   object-fit: cover;
   border-radius: 16px;
-
+  justify-content: center;
   border: 2px solid transparent;
   background:
     linear-gradient(var(--sidebar-bg), var(--sidebar-bg)) padding-box,
