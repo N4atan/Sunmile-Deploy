@@ -1,11 +1,4 @@
-import {
-	Entity,
-	PrimaryGeneratedColumn,
-	Column,
-	ManyToOne,
-	CreateDateColumn,
-	JoinColumn
-} from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, JoinColumn } from 'typeorm'
 import { Professional } from './Professional'
 
 @Entity('pro_posts')
@@ -18,6 +11,10 @@ export class ProPost {
 
 	@Column({ type: 'text' })
 	content!: string
+
+	@Column({ type: 'text', array: true, nullable: true })
+	image_urls?: string[]
+
 
 	@ManyToOne(() => Professional)
 	@JoinColumn({ name: 'professional_id' })

@@ -1,6 +1,4 @@
 <div class="posts-header">
-  <h2>Posts Profissionais</h2>
-
   <button id="create-post-btn" class="btn-primary" style="display:none;">
     POSTAR
   </button>
@@ -12,12 +10,35 @@
   <div class="modal-content">
     <h3>Novo Post</h3>
 
-    <input id="post-title" placeholder="Título" />
-    <textarea id="post-content" placeholder="Conteúdo"></textarea>
+    <div class="modal-section">
+      <input id="post-title" placeholder="Título" />
+    </div>
+
+    <div class="modal-section">
+      <textarea id="post-content" placeholder="Conteúdo"></textarea>
+    </div>
+
+    <div class="modal-section">
+      <input 
+        type="file"
+        id="post-images"
+        accept="image/*"
+        multiple
+      />
+    </div>
+
+    <div
+      id="post-image-preview"
+      class="post-image-preview modal-section">
+    </div>
 
     <div class="modal-actions">
-      <button id="cancel-post">Cancelar</button>
-      <button id="submit-post">Publicar</button>
+      <button id="cancel-post">
+        Cancelar
+      </button>
+      <button id="submit-post">
+        Publicar
+      </button>
     </div>
   </div>
 </div>

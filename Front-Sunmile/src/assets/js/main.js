@@ -65,7 +65,6 @@ async function fetchCurrentUser() {
 		const res = await fetch(`${API_BASE}/me/user`, {
 			headers: { Authorization: `Bearer ${token}` }
 		})
-
 		if (!res.ok) throw new Error()
 		return await res.json()
 	} catch {
@@ -114,9 +113,7 @@ async function loadPage(page) {
 
 			if (user.role === 'pro') {
 				const professional = await fetchCurrentProfessional()
-				if (professional) {
-					user.professional = professional
-				}
+				if (professional) user.professional = professional
 			}
 
 			const profilePage = user.role === 'pro'
@@ -177,13 +174,20 @@ async function loadPosts() {
 				? `<img src="${user.profile_pic_url}" alt="Avatar de ${user.name}">`
 				: user.name.charAt(0)
 
+			const images = Array.isArray(post.image_urls)
+				? `
+					<div class="post-images">
+						${post.image_urls.map(url => `
+							<img src="${url}" alt="Imagem do post">
+						`).join('')}
+					</div>
+				  `
+				: ''
+
 			return `
 				<div class="post-card">
 					<div class="post-header">
-						<div class="post-avatar">
-							${avatar}
-						</div>
-
+						<div class="post-avatar">${avatar}</div>
 						<div class="post-author">
 							<strong>${user.name}</strong>
 							<span>@${user.username}</span>
@@ -193,6 +197,7 @@ async function loadPosts() {
 					<div class="post-content">
 						<h3>${post.title}</h3>
 						<p>${post.content}</p>
+						${images}
 					</div>
 				</div>
 			`
@@ -211,11 +216,38 @@ function setupPostModal() {
 	const openBtn = document.getElementById('create-post-btn')
 	const cancelBtn = document.getElementById('cancel-post')
 	const submitBtn = document.getElementById('submit-post')
+	const imageInput = document.getElementById('post-images')
+	const preview = document.getElementById('post-image-preview')
 
 	if (!modal || !openBtn || !cancelBtn || !submitBtn) return
 
+	let selectedFiles = []
+
 	openBtn.onclick = () => modal.classList.remove('hidden')
-	cancelBtn.onclick = () => modal.classList.add('hidden')
+
+	cancelBtn.onclick = () => {
+		modal.classList.add('hidden')
+		preview.innerHTML = ''
+		imageInput.value = ''
+		selectedFiles = []
+	}
+
+	imageInput.onchange = () => {
+		preview.innerHTML = ''
+		selectedFiles = Array.from(imageInput.files)
+
+		selectedFiles.forEach(file => {
+			if (!file.type.startsWith('image/')) return
+
+			const reader = new FileReader()
+			reader.onload = () => {
+				const img = document.createElement('img')
+				img.src = reader.result
+				preview.appendChild(img)
+			}
+			reader.readAsDataURL(file)
+		})
+	}
 
 	submitBtn.onclick = async () => {
 		const title = document.getElementById('post-title').value.trim()
@@ -227,18 +259,40 @@ function setupPostModal() {
 		}
 
 		try {
+			let image_urls = []
+
+			for (const file of selectedFiles) {
+				const formData = new FormData()
+				formData.append('file', file)
+				formData.append('upload_preset', 'sunmile_unsigned')
+
+				const cloudRes = await fetch(
+					'https://api.cloudinary.com/v1_1/dgvwjb1cj/image/upload',
+					{ method: 'POST', body: formData }
+				)
+
+				const cloudData = await cloudRes.json()
+				if (cloudData.secure_url) {
+					image_urls.push(cloudData.secure_url)
+				}
+			}
+
 			const res = await fetch(`${API_BASE}/pro-posts`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 					Authorization: `Bearer ${token}`
 				},
-				body: JSON.stringify({ title, content })
+				body: JSON.stringify({ title, content, image_urls })
 			})
 
 			if (!res.ok) throw new Error()
 
 			modal.classList.add('hidden')
+			preview.innerHTML = ''
+			imageInput.value = ''
+			selectedFiles = []
+
 			loadPosts()
 
 		} catch {
